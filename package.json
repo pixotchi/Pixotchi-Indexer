@@ -1,0 +1,32 @@
+{
+  "name": "pixotchi_indexer",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "ponder dev",
+    "start": "ponder start",
+    "start:railway": "ponder start --schema $RAILWAY_DEPLOYMENT_ID",
+    "start:testnet": "ponder start --config ponder.config.testnet.ts",
+    "start:testnet:railway": "ponder start --config ponder.config.testnet.ts --schema $RAILWAY_DEPLOYMENT_ID",
+    "codegen": "ponder codegen",
+    "serve": "ponder serve",
+    "lint": "eslint ./src/*ts",
+    "typecheck": "tsc",
+    "abi:transformer": "cd ./abis && node ./transformer.cjs",
+    "build": "ponder codegen"
+  },
+  "dependencies": {
+    "ponder": "^0.12.21",
+    "viem": "^2.37.5",
+    "hono": "^4.9.6"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.1",
+    "eslint": "^8.54.0",
+    "eslint-config-ponder": "^0.12.21",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=18.14.0"
+  }
+}

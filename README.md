@@ -10,12 +10,9 @@ A high-performance blockchain indexer for Pixotchi game events built with [Ponde
   <img alt="ponder" src="https://img.shields.io/badge/Indexer-Ponder-6b46c1" />
   <img alt="hono" src="https://img.shields.io/badge/API-Hono-ff6b6b" />
   <img alt="graphql" src="https://img.shields.io/badge/API-GraphQL-e10098" />
-  <img alt="viem" src="https://img.shields.io/badge/Client-Viem-3b82f6" />
-  <img alt="typescript" src="https://img.shields.io/badge/Language-TypeScript-3178c6" />
   <img alt="node" src="https://img.shields.io/badge/Runtime-Node.js-43853d" />
   <img alt="postgres" src="https://img.shields.io/badge/DB-PostgreSQL%2FPGlite-336791" />
   <img alt="base" src="https://img.shields.io/badge/Network-Base-blue" />
-  <img alt="env" src="https://img.shields.io/badge/Secrets-.env_only-orange" />
   <img alt="status" src="https://img.shields.io/badge/Status-Production-green" />
 </p>
 
@@ -614,4 +611,5 @@ Licensed under the MIT License. See the `LICENSE` file at the project root for d
 ---
 
 **Built with ❤️ for the Pixotchi community**
+
 

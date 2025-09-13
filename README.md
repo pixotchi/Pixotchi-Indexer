@@ -1,7 +1,23 @@
 # Pixotchi Game Indexer
 
+
 A high-performance blockchain indexer for Pixotchi game events built with [Ponder](https://ponder.sh). This service indexes game activities from the Base blockchain and exposes them through a GraphQL API for fast, efficient querying by frontend applications.
 
+<!-- Badges / Architecture Tags -->
+<p>
+  <img alt="live" src="https://img.shields.io/badge/live-online-brightgreen" />
+  <img alt="hosted" src="https://img.shields.io/badge/Hosted%20on-Railway-0B0D0E" />
+  <img alt="ponder" src="https://img.shields.io/badge/Indexer-Ponder-6b46c1" />
+  <img alt="hono" src="https://img.shields.io/badge/API-Hono-ff6b6b" />
+  <img alt="graphql" src="https://img.shields.io/badge/API-GraphQL-e10098" />
+  <img alt="viem" src="https://img.shields.io/badge/Client-Viem-3b82f6" />
+  <img alt="typescript" src="https://img.shields.io/badge/Language-TypeScript-3178c6" />
+  <img alt="node" src="https://img.shields.io/badge/Runtime-Node.js-43853d" />
+  <img alt="postgres" src="https://img.shields.io/badge/DB-PostgreSQL%2FPGlite-336791" />
+  <img alt="base" src="https://img.shields.io/badge/Network-Base-blue" />
+  <img alt="env" src="https://img.shields.io/badge/Secrets-.env_only-orange" />
+  <img alt="status" src="https://img.shields.io/badge/Status-Production-green" />
+</p>
 
 ## Overview
 
@@ -176,10 +192,10 @@ Transaction bundlers can execute multiple operations in a single transaction, ca
 Uses Ponder's unique `event.id` instead of `transaction.hash` for primary keys:
 
 ```typescript
-// ❌ Problematic (causes duplicates with bundlers)
+//  Problematic (causes duplicates with bundlers)
 id: event.transaction.hash
 
-// ✅ Correct (always unique)
+//  Correct (always unique)
 id: event.id  // 75-digit globally unique identifier
 ```
 
@@ -593,8 +609,9 @@ INFO  land       Processing land transfer for landId 567
 
 ## License
 
-This project is private and proprietary to the Pixotchi team.
+Licensed under the MIT License. See the `LICENSE` file at the project root for details.
 
 ---
 
 **Built with ❤️ for the Pixotchi community**
+

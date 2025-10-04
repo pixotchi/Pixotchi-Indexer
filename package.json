@@ -16,9 +16,9 @@
     "build": "ponder codegen"
   },
   "dependencies": {
-    "ponder": "^0.13.0",
-    "viem": "^2.37.7",
-    "hono": "^4.9.8"
+    "ponder": "^0.13.9",
+    "viem": "^2.37.12",
+    "hono": "^4.9.9"
   },
   "devDependencies": {
     "@types/node": "^24.3.1",

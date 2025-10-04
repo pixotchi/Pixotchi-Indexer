@@ -84,7 +84,7 @@ The indexer tracks these key game events across both Pixotchi and Land systems:
 - **What**: Land naming and minting
 - **Data**: Land ID, new names, mint events
 
-## 🔧 Technical Implementation
+##  Technical Implementation
 
 ### Multi-RPC Reliability System
 
@@ -458,7 +458,7 @@ const response = await fetch('https://api.mini.pixotchi.tech/graphql', {
 2. Add 4 network-specific RPC endpoints for redundancy
 3. Update upgrade block constants in event handlers
 
-## 🛠️ Development
+##  Development
 
 ### Prerequisites
 - Node.js ≥18.14.0 (optimized for ≥24.1.0)

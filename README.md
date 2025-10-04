@@ -1,20 +1,7 @@
 # Pixotchi Game Indexer
 
-
 A high-performance blockchain indexer for Pixotchi game events built with [Ponder](https://ponder.sh). This service indexes game activities from the Base blockchain and exposes them through a GraphQL API for fast, efficient querying by frontend applications.
 
-<!-- Badges / Architecture Tags -->
-[![Live](https://img.shields.io/website?url=https%3A%2F%2Fapi.mini.pixotchi.tech%2Fhealth&label=live&up_message=online&down_message=offline&style=flat-square)](https://api.mini.pixotchi.tech/graphql)
-[![Railway](https://img.shields.io/badge/Hosted%20on-Railway-0B0D0E?logo=railway&logoColor=white&style=flat-square)](https://railway.app)
-[![Ponder](https://img.shields.io/badge/Indexer-Ponder-6b46c1?style=flat-square)](https://ponder.sh)
-[![Hono](https://img.shields.io/badge/API-Hono-ff6b6b?style=flat-square)](https://hono.dev)
-[![GraphQL](https://img.shields.io/badge/API-GraphQL-e10098?logo=graphql&logoColor=white&style=flat-square)](https://graphql.org/)
-[![TypeScript](https://img.shields.io/badge/Language-TypeScript-3178c6?logo=typescript&logoColor=white&style=flat-square)](https://www.typescriptlang.org/)
-[![Node.js](https://img.shields.io/badge/Runtime-Node.js-43853d?logo=node.js&logoColor=white&style=flat-square)](https://nodejs.org/)
-[![PostgreSQL](https://img.shields.io/badge/DB-PostgreSQL-336791?logo=postgresql&logoColor=white&style=flat-square)](https://www.postgresql.org/)
-[![PGlite](https://img.shields.io/badge/DB-PGlite-4b8bbe?style=flat-square)](https://github.com/electric-sql/pglite)
-[![Base Network](https://img.shields.io/badge/Base-Mainnet-0052FF?logo=coinbase&logoColor=white&style=flat-square)](https://www.base.org/)
-[![Status](https://img.shields.io/badge/Status-Production-green?style=flat-square)](./README.md)
 
 ## Overview
 
@@ -189,10 +176,10 @@ Transaction bundlers can execute multiple operations in a single transaction, ca
 Uses Ponder's unique `event.id` instead of `transaction.hash` for primary keys:
 
 ```typescript
-//  Problematic (causes duplicates with bundlers)
+// ❌ Problematic (causes duplicates with bundlers)
 id: event.transaction.hash
 
-//  Correct (always unique)
+// ✅ Correct (always unique)
 id: event.id  // 75-digit globally unique identifier
 ```
 
@@ -606,11 +593,8 @@ INFO  land       Processing land transfer for landId 567
 
 ## License
 
-Licensed under the MIT License. See the `LICENSE` file at the project root for details.
+This project is private and proprietary to the Pixotchi team.
 
 ---
 
 **Built with ❤️ for the Pixotchi community**
-
-
-

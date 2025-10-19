@@ -39,7 +39,19 @@ async function withRetry<T>(
             return await operation();
         } catch (error) {
             lastError = error as Error;
-            
+
+            // Check if this is an archive-related error (403 Forbidden)
+            const errorMessage = lastError.message.toLowerCase();
+            const isArchiveError = errorMessage.includes('403') ||
+                                 errorMessage.includes('forbidden') ||
+                                 errorMessage.includes('archive') ||
+                                 errorMessage.includes('debug and trace');
+
+            if (isArchiveError) {
+                console.error(`${context} failed with archive error (not retrying):`, lastError.message);
+                throw lastError;
+            }
+
             if (attempt === maxRetries) {
                 console.error(`Failed ${context} after ${maxRetries} retries:`, lastError.message);
                 throw lastError;
@@ -47,7 +59,7 @@ async function withRetry<T>(
 
             const delay = getRetryDelay(attempt);
             console.warn(`${context} failed (attempt ${attempt + 1}/${maxRetries + 1}), retrying in ${delay}ms:`, lastError.message);
-            
+
             await new Promise(resolve => setTimeout(resolve, delay));
         }
     }
@@ -57,33 +69,32 @@ async function withRetry<T>(
 
 // Enhanced function to get a single plant name with caching and retry logic
 async function getPlantName(
-    chainId: number, 
-    eventBlockNumber: bigint, 
-    client: any, 
-    PixotchiNFT: any, 
+    chainId: number,
+    eventBlockNumber: bigint,
+    client: any,
+    PixotchiNFT: any,
     input: bigint
 ): Promise<string> {
     const cacheKey = getCacheKey(chainId, input);
     const fallbackName = `Plant #${input}`;
-    
+
     // Check cache first
     const cached = PLANT_NAME_CACHE.get(cacheKey);
     if (cached && isCacheValid(cached)) {
         return cached.name;
     }
 
+    const upgradeBockHigh = chainId == 8453 ? UPGRADE_BLOCK_HIGH_1 : UPGRADE_BLOCK_HIGH_1_TESTNET;
+
+    // Return fallback for blocks before upgrade - no contract call needed
+    if (eventBlockNumber <= upgradeBockHigh) {
+        // Cache the fallback result
+        PLANT_NAME_CACHE.set(cacheKey, { name: fallbackName, timestamp: Date.now() });
+        return fallbackName;
+    }
+
     try {
-        const upgradeBockHigh = chainId == 8453 ? UPGRADE_BLOCK_HIGH_1 : UPGRADE_BLOCK_HIGH_1_TESTNET;
-
-        // Return fallback for blocks before upgrade
-        if (eventBlockNumber <= upgradeBockHigh) {
-            const result = fallbackName;
-            // Cache the fallback result
-            PLANT_NAME_CACHE.set(cacheKey, { name: result, timestamp: Date.now() });
-            return result;
-        }
-
-        // Make contract call with retry logic
+        // Make contract call with retry logic for post-upgrade blocks only
         const result = await withRetry(async () => {
             return await client.readContract({
             abi: PixotchiNFT.abi,
@@ -92,20 +103,31 @@ async function getPlantName(
             args: [input],
         });
         }, MAX_RETRIES, `getPlantName for NFT ${input}`);
-        
+
         const plantName = (!result || result === "" || result === "0x") ? fallbackName : result;
-        
+
         // Cache the successful result
         PLANT_NAME_CACHE.set(cacheKey, { name: plantName, timestamp: Date.now() });
-        
+
         return plantName;
-        
+
     } catch (error) {
-        console.error(`Failed to get plant name for NFT ${input} after retries, using fallback:`, error);
-        
+        // Check if this is an archive-related error
+        const errorMessage = (error as Error).message.toLowerCase();
+        const isArchiveError = errorMessage.includes('403') ||
+                             errorMessage.includes('forbidden') ||
+                             errorMessage.includes('archive') ||
+                             errorMessage.includes('debug and trace');
+
+        if (isArchiveError) {
+            console.warn(`Plant name for NFT ${input} not available due to archive restrictions, using fallback`);
+        } else {
+            console.error(`Failed to get plant name for NFT ${input} after retries, using fallback:`, error);
+        }
+
         // Cache the fallback result to prevent repeated failures
         PLANT_NAME_CACHE.set(cacheKey, { name: fallbackName, timestamp: Date.now() });
-        
+
         return fallbackName;
     }
 }

@@ -9,14 +9,14 @@ export default createConfig({
     base: {
       id: 8453,
       rpc: [
-        // Primary RPC
-        process.env.PONDER_RPC_URL_BASE_1!,
-        // Secondary RPC
-        process.env.PONDER_RPC_URL_BASE_2!,
-        // Tertiary RPC (fallback)
-        process.env.PONDER_RPC_URL_BASE_3!,
-        // Quaternary RPC (additional fallback)
-        process.env.PONDER_RPC_URL_BASE_4!,
+        // Primary RPC - Chainstack (may not support archive)
+        process.env.PONDER_RPC_URL_BASE_1 || "https://base-mainnet.core.chainstack.com/7ec0d717d82dc95cf5cf7b5afbdd1f4c",
+        // Secondary RPC - Infura (supports archive)
+        process.env.PONDER_RPC_URL_BASE_2 || "https://base-mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
+        // Tertiary RPC - Alchemy (supports archive)
+        process.env.PONDER_RPC_URL_BASE_3 || "https://base-mainnet.alchemyapi.io/v2/demo",
+        // Quaternary RPC - Public RPC (fallback)
+        process.env.PONDER_RPC_URL_BASE_4 || "https://mainnet.base.org",
       ].filter(Boolean),
       transport: http(),
     },

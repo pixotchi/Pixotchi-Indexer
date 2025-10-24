@@ -291,7 +291,7 @@ ponder.on("PixotchiNFT:Played", async ({ event, context }: IndexingFunctionArgs<
     await context.db
         .insert(Played)
         .values({
-            id: `${event.transaction.hash}-${event.logIndex}`,
+            id: event.id,
             timestamp: event.block.timestamp,
             nftId: event.args.id,
             points: event.args.points,
@@ -309,7 +309,7 @@ ponder.on("PixotchiNFT:PlayedV2", async ({ event, context }: IndexingFunctionArg
     await context.db
         .insert(Played)
         .values({
-            id: `${event.transaction.hash}-${event.logIndex}`,
+            id: event.id,
             timestamp: event.block.timestamp,
             nftId: event.args.id,
             points: event.args.points,
@@ -327,7 +327,7 @@ ponder.on("PixotchiNFT:SpinGameV2Played", async ({ event, context }: IndexingFun
     await context.db
         .insert(Played)
         .values({
-            id: `${event.transaction.hash}-${event.logIndex}`,
+            id: event.id,
             timestamp: event.block.timestamp,
             nftId: event.args.nftId,
             points: event.args.pointsDelta,

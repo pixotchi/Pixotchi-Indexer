@@ -2751,6 +2751,51 @@ export const PixotchiRouterAbi = [
     stateMutability: "nonpayable",
   },
   {
+    type: "event",
+    name: "SpinGameV2Played",
+    inputs: [
+      {
+        type: "uint256",
+        name: "nftId",
+        indexed: true,
+        internalType: "uint256",
+      },
+      {
+        type: "address",
+        name: "player",
+        indexed: true,
+        internalType: "address",
+      },
+      {
+        type: "uint256",
+        name: "rewardIndex",
+        indexed: true,
+        internalType: "uint256",
+      },
+      {
+        type: "int256",
+        name: "pointsDelta",
+        indexed: false,
+        internalType: "int256",
+      },
+      {
+        type: "uint256",
+        name: "timeAdded",
+        indexed: false,
+        internalType: "uint256",
+      },
+      {
+        type: "uint256",
+        name: "leafAmount",
+        indexed: false,
+        internalType: "uint256",
+      },
+    ],
+    outputs: [
+    ],
+    anonymous: false,
+  },
+  {
     type: "receive",
     name: "",
     inputs: [

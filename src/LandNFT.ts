@@ -1,7 +1,6 @@
 import { ponder } from "ponder:registry";
 import { 
   Land, 
-  LandPlant, 
   PlantLifetimeAssignedEvent, 
   PlantPointsAssignedEvent, 
   LandTransferEvent,
@@ -129,7 +128,7 @@ ponder.on("LandContract:LandNameChanged", async ({ event, context }: IndexingFun
 });
 
 ponder.on("LandContract:PlantLifetimeAssigned", async ({ event, context }: IndexingFunctionArgs<"LandContract:PlantLifetimeAssigned">) => {
-  // Only track the event - don't maintain state in LandPlant to avoid race conditions
+  // Only track the event - don't maintain additional state to avoid race conditions
   await context.db
     .insert(PlantLifetimeAssignedEvent)
     .values({
@@ -144,7 +143,7 @@ ponder.on("LandContract:PlantLifetimeAssigned", async ({ event, context }: Index
 });
 
 ponder.on("LandContract:PlantPointsAssigned", async ({ event, context }: IndexingFunctionArgs<"LandContract:PlantPointsAssigned">) => {
-  // Only track the event - don't maintain state in LandPlant to avoid race conditions
+  // Only track the event - don't maintain additional state to avoid race conditions
   await context.db
     .insert(PlantPointsAssignedEvent)
     .values({

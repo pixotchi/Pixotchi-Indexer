@@ -1,5 +1,4 @@
 import { createConfig } from "ponder";
-import { http } from "viem";
 
 import { PixotchiRouterAbi } from "./abis/PixotchiRouterAbi";
 import { LandAbi } from "./abis/LandAbi";
@@ -18,7 +17,6 @@ export default createConfig({
         // Quaternary RPC (additional fallback)
         process.env.PONDER_RPC_URL_TESTNET_4!,
       ].filter(Boolean),
-      transport: http(),
     },
   },
   contracts: {

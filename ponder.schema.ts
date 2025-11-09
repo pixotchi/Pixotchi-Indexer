@@ -1,6 +1,6 @@
 import { onchainTable } from "ponder";
 
-export const Attack = onchainTable("Attack", (t) => ({
+export const Attack = onchainTable("attack", (t) => ({
   id: t.text().primaryKey(),
   attacker: t.bigint().notNull(),
   attackerName: t.text().notNull(),
@@ -12,7 +12,7 @@ export const Attack = onchainTable("Attack", (t) => ({
   timestamp: t.bigint().notNull(),
 }));
 
-export const ItemConsumed = onchainTable("ItemConsumed", (t) => ({
+export const ItemConsumed = onchainTable("item_consumed", (t) => ({
   id: t.text().primaryKey(),
   nftId: t.bigint().notNull(),
   nftName: t.text().notNull(),
@@ -21,7 +21,7 @@ export const ItemConsumed = onchainTable("ItemConsumed", (t) => ({
   timestamp: t.bigint().notNull(),
 }));
 
-export const Killed = onchainTable("Killed", (t) => ({
+export const Killed = onchainTable("killed", (t) => ({
   id: t.text().primaryKey(),
   nftId: t.bigint().notNull(),
   deadId: t.bigint().notNull(),
@@ -32,13 +32,13 @@ export const Killed = onchainTable("Killed", (t) => ({
   timestamp: t.bigint().notNull(),
 }));
 
-export const Mint = onchainTable("Mint", (t) => ({
+export const Mint = onchainTable("mint", (t) => ({
   id: t.text().primaryKey(),
   nftId: t.bigint().notNull(),
   timestamp: t.bigint().notNull(),
 }));
 
-export const Played = onchainTable("Played", (t) => ({
+export const Played = onchainTable("played", (t) => ({
   id: t.text().primaryKey(),
   nftId: t.bigint().notNull(),
   nftName: t.text().notNull(),
@@ -52,7 +52,7 @@ export const Played = onchainTable("Played", (t) => ({
   leafAmount: t.bigint(),
 }));
 
-export const ShopItemPurchased = onchainTable("ShopItemPurchased", (t) => ({
+export const ShopItemPurchased = onchainTable("shop_item_purchased", (t) => ({
   id: t.text().primaryKey(),
   nftId: t.bigint().notNull(),
   nftName: t.text().notNull(),
@@ -62,7 +62,7 @@ export const ShopItemPurchased = onchainTable("ShopItemPurchased", (t) => ({
 }));
 
 // Land-related tables
-export const Land = onchainTable("Land", (t) => ({
+export const Land = onchainTable("land", (t) => ({
   id: t.bigint().primaryKey(),
   owner: t.text().notNull(),
   name: t.text(),
@@ -70,17 +70,8 @@ export const Land = onchainTable("Land", (t) => ({
   timestamp: t.bigint().notNull(),
 }));
 
-export const LandPlant = onchainTable("LandPlant", (t) => ({
-  id: t.bigint().primaryKey(),
-  landId: t.bigint().notNull(),
-  lifetime: t.bigint().notNull(),
-  points: t.bigint().notNull(),
-  blockHeight: t.bigint().notNull(),
-  timestamp: t.bigint().notNull(),
-}));
-
 // Land event tables
-export const PlantLifetimeAssignedEvent = onchainTable("PlantLifetimeAssignedEvent", (t) => ({
+export const PlantLifetimeAssignedEvent = onchainTable("plant_lifetime_assigned_event", (t) => ({
   id: t.text().primaryKey(),
   landId: t.bigint().notNull(),
   plantId: t.bigint().notNull(),
@@ -90,7 +81,7 @@ export const PlantLifetimeAssignedEvent = onchainTable("PlantLifetimeAssignedEve
   timestamp: t.bigint().notNull(),
 }));
 
-export const PlantPointsAssignedEvent = onchainTable("PlantPointsAssignedEvent", (t) => ({
+export const PlantPointsAssignedEvent = onchainTable("plant_points_assigned_event", (t) => ({
   id: t.text().primaryKey(),
   landId: t.bigint().notNull(),
   plantId: t.bigint().notNull(),
@@ -100,7 +91,7 @@ export const PlantPointsAssignedEvent = onchainTable("PlantPointsAssignedEvent",
   timestamp: t.bigint().notNull(),
 }));
 
-export const LandTransferEvent = onchainTable("LandTransferEvent", (t) => ({
+export const LandTransferEvent = onchainTable("land_transfer_event", (t) => ({
   id: t.text().primaryKey(),
   from: t.text().notNull(),
   to: t.text().notNull(),
@@ -109,7 +100,7 @@ export const LandTransferEvent = onchainTable("LandTransferEvent", (t) => ({
   timestamp: t.bigint().notNull(),
 }));
 
-export const VillageProductionClaimedEvent = onchainTable("VillageProductionClaimedEvent", (t) => ({
+export const VillageProductionClaimedEvent = onchainTable("village_production_claimed_event", (t) => ({
   id: t.text().primaryKey(),
   landId: t.bigint().notNull(),
   buildingId: t.integer().notNull(),
@@ -117,7 +108,7 @@ export const VillageProductionClaimedEvent = onchainTable("VillageProductionClai
   timestamp: t.bigint().notNull(),
 }));
 
-export const VillageProductionXPClaimCooldownActiveEvent = onchainTable("VillageProductionXPClaimCooldownActiveEvent", (t) => ({
+export const VillageProductionXPClaimCooldownActiveEvent = onchainTable("village_production_xp_claim_cooldown_active_event", (t) => ({
   id: t.text().primaryKey(),
   landId: t.bigint().notNull(),
   buildingId: t.bigint().notNull(),
@@ -127,7 +118,7 @@ export const VillageProductionXPClaimCooldownActiveEvent = onchainTable("Village
   timestamp: t.bigint().notNull(),
 }));
 
-export const VillageProductionXPClaimedEvent = onchainTable("VillageProductionXPClaimedEvent", (t) => ({
+export const VillageProductionXPClaimedEvent = onchainTable("village_production_xp_claimed_event", (t) => ({
   id: t.text().primaryKey(),
   landId: t.bigint().notNull(),
   buildingId: t.bigint().notNull(),
@@ -137,7 +128,7 @@ export const VillageProductionXPClaimedEvent = onchainTable("VillageProductionXP
   timestamp: t.bigint().notNull(),
 }));
 
-export const VillageSpeedUpWithSeedEvent = onchainTable("VillageSpeedUpWithSeedEvent", (t) => ({
+export const VillageSpeedUpWithSeedEvent = onchainTable("village_speed_up_with_seed_event", (t) => ({
   id: t.text().primaryKey(),
   landId: t.bigint().notNull(),
   buildingId: t.integer().notNull(),
@@ -147,7 +138,7 @@ export const VillageSpeedUpWithSeedEvent = onchainTable("VillageSpeedUpWithSeedE
   timestamp: t.bigint().notNull(),
 }));
 
-export const VillageUpgradedWithLeafEvent = onchainTable("VillageUpgradedWithLeafEvent", (t) => ({
+export const VillageUpgradedWithLeafEvent = onchainTable("village_upgraded_with_leaf_event", (t) => ({
   id: t.text().primaryKey(),
   landId: t.bigint().notNull(),
   buildingId: t.integer().notNull(),
@@ -157,7 +148,7 @@ export const VillageUpgradedWithLeafEvent = onchainTable("VillageUpgradedWithLea
   timestamp: t.bigint().notNull(),
 }));
 
-export const TownSpeedUpWithSeedEvent = onchainTable("TownSpeedUpWithSeedEvent", (t) => ({
+export const TownSpeedUpWithSeedEvent = onchainTable("town_speed_up_with_seed_event", (t) => ({
   id: t.text().primaryKey(),
   landId: t.bigint().notNull(),
   buildingId: t.integer().notNull(),
@@ -167,7 +158,7 @@ export const TownSpeedUpWithSeedEvent = onchainTable("TownSpeedUpWithSeedEvent",
   timestamp: t.bigint().notNull(),
 }));
 
-export const TownUpgradedWithLeafEvent = onchainTable("TownUpgradedWithLeafEvent", (t) => ({
+export const TownUpgradedWithLeafEvent = onchainTable("town_upgraded_with_leaf_event", (t) => ({
   id: t.text().primaryKey(),
   landId: t.bigint().notNull(),
   buildingId: t.integer().notNull(),
@@ -177,7 +168,7 @@ export const TownUpgradedWithLeafEvent = onchainTable("TownUpgradedWithLeafEvent
   timestamp: t.bigint().notNull(),
 }));
 
-export const QuestStartedEvent = onchainTable("QuestStartedEvent", (t) => ({
+export const QuestStartedEvent = onchainTable("quest_started_event", (t) => ({
   id: t.text().primaryKey(),
   landId: t.bigint().notNull(),
   farmerSlotId: t.bigint().notNull(),
@@ -188,7 +179,7 @@ export const QuestStartedEvent = onchainTable("QuestStartedEvent", (t) => ({
   timestamp: t.bigint().notNull(),
 }));
 
-export const QuestCommittedEvent = onchainTable("QuestCommittedEvent", (t) => ({
+export const QuestCommittedEvent = onchainTable("quest_committed_event", (t) => ({
   id: t.text().primaryKey(),
   landId: t.bigint().notNull(),
   farmerSlotId: t.bigint().notNull(),
@@ -197,7 +188,7 @@ export const QuestCommittedEvent = onchainTable("QuestCommittedEvent", (t) => ({
   timestamp: t.bigint().notNull(),
 }));
 
-export const QuestFinalizedEvent = onchainTable("QuestFinalizedEvent", (t) => ({
+export const QuestFinalizedEvent = onchainTable("quest_finalized_event", (t) => ({
   id: t.text().primaryKey(),
   landId: t.bigint().notNull(),
   farmerSlotId: t.bigint().notNull(),
@@ -208,7 +199,7 @@ export const QuestFinalizedEvent = onchainTable("QuestFinalizedEvent", (t) => ({
   timestamp: t.bigint().notNull(),
 }));
 
-export const QuestResetEvent = onchainTable("QuestResetEvent", (t) => ({
+export const QuestResetEvent = onchainTable("quest_reset_event", (t) => ({
   id: t.text().primaryKey(),
   landId: t.bigint().notNull(),
   farmerSlotId: t.bigint().notNull(),
@@ -217,7 +208,7 @@ export const QuestResetEvent = onchainTable("QuestResetEvent", (t) => ({
   timestamp: t.bigint().notNull(),
 }));
 
-export const WareHouseLifetimeAssignedEvent = onchainTable("WareHouseLifetimeAssignedEvent", (t) => ({
+export const WareHouseLifetimeAssignedEvent = onchainTable("warehouse_lifetime_assigned_event", (t) => ({
   id: t.text().primaryKey(),
   landId: t.bigint().notNull(),
   plantId: t.bigint().notNull(),
@@ -227,7 +218,7 @@ export const WareHouseLifetimeAssignedEvent = onchainTable("WareHouseLifetimeAss
   timestamp: t.bigint().notNull(),
 }));
 
-export const WareHousePlantPointsAssignedEvent = onchainTable("WareHousePlantPointsAssignedEvent", (t) => ({
+export const WareHousePlantPointsAssignedEvent = onchainTable("warehouse_plant_points_assigned_event", (t) => ({
   id: t.text().primaryKey(),
   landId: t.bigint().notNull(),
   plantId: t.bigint().notNull(),
@@ -237,7 +228,7 @@ export const WareHousePlantPointsAssignedEvent = onchainTable("WareHousePlantPoi
   timestamp: t.bigint().notNull(),
 }));
 
-export const LandNameChangedEvent = onchainTable("LandNameChangedEvent", (t) => ({
+export const LandNameChangedEvent = onchainTable("land_name_changed_event", (t) => ({
   id: t.text().primaryKey(),
   tokenId: t.bigint().notNull(),
   name: t.text().notNull(),
@@ -245,7 +236,7 @@ export const LandNameChangedEvent = onchainTable("LandNameChangedEvent", (t) => 
   timestamp: t.bigint().notNull(),
 }));
 
-export const LandMintedEvent = onchainTable("LandMintedEvent", (t) => ({
+export const LandMintedEvent = onchainTable("land_minted_event", (t) => ({
   id: t.text().primaryKey(),
   to: t.text().notNull(),
   tokenId: t.bigint().notNull(),

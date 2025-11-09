@@ -40,7 +40,6 @@ app.get("/api", (c) => {
       pixotchi: ["Attack", "ItemConsumed", "Killed", "Mint", "Played", "ShopItemPurchased"],
       land: [
         "Land", 
-        "LandPlant", 
         "PlantLifetimeAssignedEvent",
         "PlantPointsAssignedEvent", 
         "LandTransferEvent",

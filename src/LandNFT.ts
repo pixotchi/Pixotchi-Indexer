@@ -24,12 +24,18 @@ import {
 import type { IndexingFunctionArgs } from "ponder:env";
 
 // Utility function to get owner of land NFT
-async function getOwnerOf(client: any, LandContract: any, tokenId: bigint) {
+async function getOwnerOf(
+  client: any,
+  LandContract: any,
+  tokenId: bigint,
+  blockNumber: bigint
+) {
   const ownerOf = await client.readContract({
     abi: LandContract.abi,
     address: LandContract.address, 
     functionName: "ownerOf",
     args: [tokenId],
+    blockNumber,
   });
   return ownerOf;
 }
@@ -91,7 +97,7 @@ ponder.on("LandContract:LandNameChanged", async ({ event, context }: IndexingFun
   const { LandContract } = context.contracts;
   
   // Fetch the owner for the token
-  const owner = await getOwnerOf(client, LandContract, event.args.tokenId);
+  const owner = await getOwnerOf(client, LandContract, event.args.tokenId, event.block.number);
 
   await context.db
     .insert(Land)

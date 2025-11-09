@@ -8,8 +8,8 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes in milliseconds
 const MAX_RETRIES = 3;
 const INITIAL_RETRY_DELAY = 1000; // 1 second
 
-const UPGRADE_BLOCK_HIGH_1 = 15119426; // Mainnet base
-const UPGRADE_BLOCK_HIGH_1_TESTNET = 11004255; // Sepolia
+const UPGRADE_BLOCK_HIGH_1 = 15119426n; // Mainnet base
+const UPGRADE_BLOCK_HIGH_1_TESTNET = 11004255n; // Sepolia
 
 // Utility function for exponential backoff delay
 function getRetryDelay(attempt: number): number {
@@ -73,10 +73,10 @@ async function getPlantName(
     }
 
     try {
-        const upgradeBockHigh = chainId == 8453 ? UPGRADE_BLOCK_HIGH_1 : UPGRADE_BLOCK_HIGH_1_TESTNET;
+        const upgradeBlockHigh = chainId === 8453 ? UPGRADE_BLOCK_HIGH_1 : UPGRADE_BLOCK_HIGH_1_TESTNET;
 
         // Return fallback for blocks before upgrade
-        if (eventBlockNumber <= upgradeBockHigh) {
+        if (eventBlockNumber <= upgradeBlockHigh) {
             const result = fallbackName;
             // Cache the fallback result
             PLANT_NAME_CACHE.set(cacheKey, { name: result, timestamp: Date.now() });
@@ -86,11 +86,12 @@ async function getPlantName(
         // Make contract call with retry logic
         const result = await withRetry(async () => {
             return await client.readContract({
-            abi: PixotchiNFT.abi,
-            address: PixotchiNFT.address,
-            functionName: "getPlantName",
-            args: [input],
-        });
+                abi: PixotchiNFT.abi,
+                address: PixotchiNFT.address,
+                functionName: "getPlantName",
+                args: [input],
+                blockNumber: eventBlockNumber,
+            });
         }, MAX_RETRIES, `getPlantName for NFT ${input}`);
         
         const plantName = (!result || result === "" || result === "0x") ? fallbackName : result;
@@ -118,10 +119,10 @@ async function getPlantsName(
     PixotchiNFT: any, 
     inputs: bigint[]
 ): Promise<string[]> {
-        const upgradeBockHigh = chainId == 8453 ? UPGRADE_BLOCK_HIGH_1 : UPGRADE_BLOCK_HIGH_1_TESTNET;
+    const upgradeBlockHigh = chainId === 8453 ? UPGRADE_BLOCK_HIGH_1 : UPGRADE_BLOCK_HIGH_1_TESTNET;
 
     // Return fallbacks for blocks before upgrade
-        if (eventBlockNumber <= upgradeBockHigh) {
+    if (eventBlockNumber <= upgradeBlockHigh) {
         const results = inputs.map(input => `Plant #${input}`);
         // Cache all fallback results
         inputs.forEach((input, index) => {
@@ -159,13 +160,14 @@ async function getPlantsName(
             abi: PixotchiNFT.abi,
             address: PixotchiNFT.address,
             functionName: 'getPlantName',
-            args: [input]
+            args: [input],
         }));
 
         const output = await withRetry(async () => {
             return await client.multicall({
-            contracts: contractCalls
-        });
+                contracts: contractCalls,
+                blockNumber: eventBlockNumber,
+            });
         }, MAX_RETRIES, `multicall for ${uncachedInputs.length} plant names`);
 
         // Process results and update cache
@@ -248,7 +250,7 @@ ponder.on("PixotchiNFT:ShopItemPurchased", async ({ event, context }: IndexingFu
     await context.db
         .insert(ShopItemPurchased)
         .values({
-            id: event.transaction.hash,
+            id: event.id,
             timestamp: event.block.timestamp,
             nftId: event.args.nftId,
             giver: event.args.buyer,
@@ -378,7 +380,7 @@ ponder.on("PixotchiNFT:Attack", async ({ event, context }: IndexingFunctionArgs<
     await context.db
         .insert(Attack)
         .values({
-            id: event.transaction.hash,
+            id: event.id,
             timestamp: event.block.timestamp,
             attacker: event.args.attacker,
             winner: event.args.winner,
@@ -395,7 +397,7 @@ ponder.on("PixotchiNFT:Killed", async ({ event, context }: IndexingFunctionArgs<
     await context.db
         .insert(Killed)
         .values({
-            id: event.transaction.hash,
+            id: event.id,
             timestamp: event.block.timestamp,
             winnerName: event.args.winnerName,
             nftId: event.args.nftId,

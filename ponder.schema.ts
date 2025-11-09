@@ -46,6 +46,10 @@ export const Played = onchainTable("Played", (t) => ({
   timeExtension: t.bigint().notNull(),
   timestamp: t.bigint().notNull(),
   gameName: t.text().notNull(),
+  player: t.text(),
+  rewardIndex: t.bigint(),
+  timeAdded: t.bigint(),
+  leafAmount: t.bigint(),
 }));
 
 export const ShopItemPurchased = onchainTable("ShopItemPurchased", (t) => ({

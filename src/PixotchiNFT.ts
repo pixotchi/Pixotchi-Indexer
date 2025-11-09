@@ -291,7 +291,7 @@ ponder.on("PixotchiNFT:Played", async ({ event, context }: IndexingFunctionArgs<
     await context.db
         .insert(Played)
         .values({
-            id: event.transaction.hash,
+            id: event.id,
             timestamp: event.block.timestamp,
             nftId: event.args.id,
             points: event.args.points,
@@ -309,13 +309,48 @@ ponder.on("PixotchiNFT:PlayedV2", async ({ event, context }: IndexingFunctionArg
     await context.db
         .insert(Played)
         .values({
-            id: event.transaction.hash,
+            id: event.id,
             timestamp: event.block.timestamp,
             nftId: event.args.id,
             points: event.args.points,
             timeExtension: event.args.timeExtension,
             nftName: plantName,
             gameName: event.args.gameName,
+        });
+});
+
+ponder.on("PixotchiNFT:SpinGameV2Played", async ({ event, context }: IndexingFunctionArgs<"PixotchiNFT:SpinGameV2Played">) => {
+    const { client } = context;
+    const { PixotchiNFT } = context.contracts;
+    const plantName = await getPlantName(context.chain.id, event.block.number, client, PixotchiNFT, event.args.nftId);
+
+    await context.db
+        .insert(Played)
+        .values({
+            id: event.id,
+            timestamp: event.block.timestamp,
+            nftId: event.args.nftId,
+            points: event.args.pointsDelta,
+            timeExtension: event.args.timeAdded,
+            nftName: plantName,
+            gameName: "SpinGameV2",
+            player: event.args.player,
+            rewardIndex: event.args.rewardIndex,
+            timeAdded: event.args.timeAdded,
+            leafAmount: event.args.leafAmount,
+        })
+        .onConflictDoUpdate({
+            target: "id",
+            update: {
+                points: event.args.pointsDelta,
+                timeExtension: event.args.timeAdded,
+                nftName: plantName,
+                timestamp: event.block.timestamp,
+                player: event.args.player,
+                rewardIndex: event.args.rewardIndex,
+                timeAdded: event.args.timeAdded,
+                leafAmount: event.args.leafAmount,
+            },
         });
 });
 

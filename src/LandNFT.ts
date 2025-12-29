@@ -71,12 +71,9 @@ ponder.on("LandContract:Transfer", async ({ event, context }: IndexingFunctionAr
       timestamp: event.block.timestamp,
     })
     .onConflictDoUpdate({
-      target: "id",
-      update: {
-        owner: event.args.to,
-        blockHeight: event.block.number,
-        timestamp: event.block.timestamp,
-      },
+      owner: event.args.to,
+      blockHeight: event.block.number,
+      timestamp: event.block.timestamp,
     });
 
   await context.db
@@ -108,12 +105,9 @@ ponder.on("LandContract:LandNameChanged", async ({ event, context }: IndexingFun
       timestamp: event.block.timestamp,
     })
     .onConflictDoUpdate({
-      target: "id",
-      update: {
-        name: event.args.name,
-        blockHeight: event.block.number,
-        timestamp: event.block.timestamp,
-      },
+      name: event.args.name,
+      blockHeight: event.block.number,
+      timestamp: event.block.timestamp,
     });
 
   await context.db

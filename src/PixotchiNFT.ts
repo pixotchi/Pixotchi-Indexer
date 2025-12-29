@@ -39,7 +39,7 @@ async function withRetry<T>(
             return await operation();
         } catch (error) {
             lastError = error as Error;
-            
+
             if (attempt === maxRetries) {
                 console.error(`Failed ${context} after ${maxRetries} retries:`, lastError.message);
                 throw lastError;
@@ -47,7 +47,7 @@ async function withRetry<T>(
 
             const delay = getRetryDelay(attempt);
             console.warn(`${context} failed (attempt ${attempt + 1}/${maxRetries + 1}), retrying in ${delay}ms:`, lastError.message);
-            
+
             await new Promise(resolve => setTimeout(resolve, delay));
         }
     }
@@ -57,15 +57,15 @@ async function withRetry<T>(
 
 // Enhanced function to get a single plant name with caching and retry logic
 async function getPlantName(
-    chainId: number, 
-    eventBlockNumber: bigint, 
-    client: any, 
-    PixotchiNFT: any, 
+    chainId: number,
+    eventBlockNumber: bigint,
+    client: any,
+    PixotchiNFT: any,
     input: bigint
 ): Promise<string> {
     const cacheKey = getCacheKey(chainId, input);
     const fallbackName = `Plant #${input}`;
-    
+
     // Check cache first
     const cached = PLANT_NAME_CACHE.get(cacheKey);
     if (cached && isCacheValid(cached)) {
@@ -93,30 +93,30 @@ async function getPlantName(
                 blockNumber: eventBlockNumber,
             });
         }, MAX_RETRIES, `getPlantName for NFT ${input}`);
-        
+
         const plantName = (!result || result === "" || result === "0x") ? fallbackName : result;
-        
+
         // Cache the successful result
         PLANT_NAME_CACHE.set(cacheKey, { name: plantName, timestamp: Date.now() });
-        
+
         return plantName;
-        
+
     } catch (error) {
         console.error(`Failed to get plant name for NFT ${input} after retries, using fallback:`, error);
-        
+
         // Cache the fallback result to prevent repeated failures
         PLANT_NAME_CACHE.set(cacheKey, { name: fallbackName, timestamp: Date.now() });
-        
+
         return fallbackName;
     }
 }
 
 // Enhanced function to get multiple plant names with batch optimization
 async function getPlantsName(
-    chainId: number, 
-    eventBlockNumber: bigint, 
-    client: any, 
-    PixotchiNFT: any, 
+    chainId: number,
+    eventBlockNumber: bigint,
+    client: any,
+    PixotchiNFT: any,
     inputs: bigint[]
 ): Promise<string[]> {
     const upgradeBlockHigh = chainId === 8453 ? UPGRADE_BLOCK_HIGH_1 : UPGRADE_BLOCK_HIGH_1_TESTNET;
@@ -140,7 +140,7 @@ async function getPlantsName(
         const input = inputs[i];
         const cacheKey = getCacheKey(chainId, input);
         const cached = PLANT_NAME_CACHE.get(cacheKey);
-        
+
         if (cached && isCacheValid(cached)) {
             results[i] = cached.name;
         } else {
@@ -152,7 +152,7 @@ async function getPlantsName(
     // If all were cached, return early
     if (uncachedInputs.length === 0) {
         return results;
-        }
+    }
 
     try {
         // Batch fetch uncached names with retry logic
@@ -174,28 +174,28 @@ async function getPlantsName(
         output.forEach((obj: any, batchIndex: number) => {
             const uncachedItem = uncachedInputs[batchIndex];
             if (!uncachedItem) return;
-            
+
             const { input, index } = uncachedItem;
             const cacheKey = getCacheKey(chainId, input);
-            
+
             let plantName: string;
             if (obj.status === 'success' && obj.result && obj.result !== '' && obj.result !== '0x') {
                 plantName = obj.result;
             } else {
                 plantName = `Plant #${input}`;
             }
-            
+
             results[index] = plantName;
-            
+
             // Cache the result
             PLANT_NAME_CACHE.set(cacheKey, { name: plantName, timestamp: Date.now() });
         });
 
         return results;
-        
+
     } catch (error) {
         console.error(`Failed to batch fetch plant names after retries, using fallbacks:`, error);
-        
+
         // Cache fallback results for failed calls
         uncachedInputs.forEach(({ input, index }) => {
             const cacheKey = getCacheKey(chainId, input);
@@ -203,7 +203,7 @@ async function getPlantsName(
             results[index] = fallbackName;
             PLANT_NAME_CACHE.set(cacheKey, { name: fallbackName, timestamp: Date.now() });
         });
-        
+
         return results;
     }
 }
@@ -212,14 +212,14 @@ async function getPlantsName(
 setInterval(() => {
     const now = Date.now();
     let cleanedCount = 0;
-    
+
     for (const [key, value] of PLANT_NAME_CACHE.entries()) {
         if (now - value.timestamp > CACHE_TTL) {
             PLANT_NAME_CACHE.delete(key);
             cleanedCount++;
         }
     }
-    
+
     if (cleanedCount > 0) {
         console.log(`Cleaned ${cleanedCount} expired entries from plant name cache. Cache size: ${PLANT_NAME_CACHE.size}`);
     }
@@ -342,17 +342,14 @@ ponder.on("PixotchiNFT:SpinGameV2Played", async ({ event, context }: IndexingFun
             leafAmount: event.args.leafAmount,
         })
         .onConflictDoUpdate({
-            target: "id",
-            update: {
-                points: event.args.pointsDelta,
-                timeExtension: event.args.timeAdded,
-                nftName: plantName,
-                timestamp: event.block.timestamp,
-                player: event.args.player,
-                rewardIndex: event.args.rewardIndex,
-                timeAdded: event.args.timeAdded,
-                leafAmount: event.args.leafAmount,
-            },
+            points: event.args.pointsDelta,
+            timeExtension: event.args.timeAdded,
+            nftName: plantName,
+            timestamp: event.block.timestamp,
+            player: event.args.player,
+            rewardIndex: event.args.rewardIndex,
+            timeAdded: event.args.timeAdded,
+            leafAmount: event.args.leafAmount,
         });
 });
 

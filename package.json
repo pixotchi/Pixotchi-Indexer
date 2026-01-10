@@ -16,14 +16,14 @@
     "build": "ponder codegen"
   },
   "dependencies": {
-    "ponder": "0.15.17",
-    "viem": "2.43.3",
+    "ponder": "0.16.1",
+    "viem": "2.44.1",
     "hono": "4.11.3"
   },
   "devDependencies": {
     "@types/node": "24.10.1",
     "eslint": "8.57.1",
-    "eslint-config-ponder": "0.15.17",
+    "eslint-config-ponder": "0.16.1",
     "typescript": "5.9.3"
   },
   "engines": {

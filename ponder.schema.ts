@@ -108,7 +108,7 @@ export const VillageProductionClaimedEvent = onchainTable("village_production_cl
   timestamp: t.bigint().notNull(),
 }));
 
-export const VillageProductionXPClaimCooldownActiveEvent = onchainTable("village_production_xp_claim_cooldown_active_event", (t) => ({
+export const VillageProductionXPClaimCooldownActiveEvent = onchainTable("village_xp_cooldown_active_event", (t) => ({
   id: t.text().primaryKey(),
   landId: t.bigint().notNull(),
   buildingId: t.bigint().notNull(),

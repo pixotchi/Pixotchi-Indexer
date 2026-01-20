@@ -16,7 +16,7 @@ The Pixotchi Indexer monitors both the Pixotchi Router smart contract (`0xeb4e16
             [Primary RPC] [Secondary RPC] [Fallback RPC]
 ```
 
-### Components
+### Components 
 
 1. **Event Listeners** (`src/PixotchiNFT.ts`, `src/LandNFT.ts`): Process raw blockchain events with caching
 2. **Schema Definition** (`ponder.schema.ts`): Define unified database structure

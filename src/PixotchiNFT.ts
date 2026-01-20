@@ -84,13 +84,14 @@ async function getPlantName(
         }
 
         // Make contract call with retry logic
+        // Note: Reading at 'latest' block instead of historical to avoid needing archive node
         const result = await withRetry(async () => {
             return await client.readContract({
                 abi: PixotchiNFT.abi,
                 address: PixotchiNFT.address,
                 functionName: "getPlantName",
                 args: [input],
-                blockNumber: eventBlockNumber,
+                // Removed: blockNumber: eventBlockNumber - requires archive node
             });
         }, MAX_RETRIES, `getPlantName for NFT ${input}`);
 
@@ -166,7 +167,7 @@ async function getPlantsName(
         const output = await withRetry(async () => {
             return await client.multicall({
                 contracts: contractCalls,
-                blockNumber: eventBlockNumber,
+                // Removed: blockNumber: eventBlockNumber - requires archive node
             });
         }, MAX_RETRIES, `multicall for ${uncachedInputs.length} plant names`);
 

@@ -558,4 +558,101 @@ export const LandAbi = [
     ],
     stateMutability: "view",
   },
+  // Casino/Roulette Events
+  {
+    type: "event",
+    name: "CasinoBuilt",
+    inputs: [
+      {
+        name: "landId",
+        type: "uint256",
+        indexed: true,
+        internalType: "uint256",
+      },
+      {
+        name: "builder",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+      {
+        name: "token",
+        type: "address",
+        indexed: false,
+        internalType: "address",
+      },
+      {
+        name: "cost",
+        type: "uint256",
+        indexed: false,
+        internalType: "uint256",
+      },
+    ],
+    outputs: [],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "RouletteSpinResult",
+    inputs: [
+      {
+        name: "landId",
+        type: "uint256",
+        indexed: true,
+        internalType: "uint256",
+      },
+      {
+        name: "player",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+      {
+        name: "winningNumber",
+        type: "uint8",
+        indexed: false,
+        internalType: "uint8",
+      },
+      {
+        name: "won",
+        type: "bool",
+        indexed: false,
+        internalType: "bool",
+      },
+      {
+        name: "payout",
+        type: "uint256",
+        indexed: false,
+        internalType: "uint256",
+      },
+    ],
+    outputs: [],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "RouletteBetExpired",
+    inputs: [
+      {
+        name: "landId",
+        type: "uint256",
+        indexed: true,
+        internalType: "uint256",
+      },
+      {
+        name: "player",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+      {
+        name: "forfeitedAmount",
+        type: "uint256",
+        indexed: false,
+        internalType: "uint256",
+      },
+    ],
+    outputs: [],
+    anonymous: false,
+  },
 ] as const; 

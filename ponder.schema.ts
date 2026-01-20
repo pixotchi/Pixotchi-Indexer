@@ -244,3 +244,27 @@ export const LandMintedEvent = onchainTable("land_minted_event", (t) => ({
   blockHeight: t.bigint().notNull(),
   timestamp: t.bigint().notNull(),
 }));
+
+// Casino/Roulette Event Tables
+export const CasinoBuiltEvent = onchainTable("casino_built_event", (t) => ({
+  id: t.text().primaryKey(),
+  landId: t.bigint().notNull(),
+  builder: t.text().notNull(),
+  token: t.text().notNull(),
+  cost: t.bigint().notNull(),
+  blockHeight: t.bigint().notNull(),
+  timestamp: t.bigint().notNull(),
+}));
+
+export const RouletteSpinResultEvent = onchainTable("roulette_spin_result_event", (t) => ({
+  id: t.text().primaryKey(),
+  landId: t.bigint().notNull(),
+  player: t.text().notNull(),
+  winningNumber: t.integer().notNull(),
+  won: t.boolean().notNull(),
+  payout: t.bigint().notNull(),
+  blockHeight: t.bigint().notNull(),
+  timestamp: t.bigint().notNull(),
+}));
+
+

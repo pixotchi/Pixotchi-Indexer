@@ -1,8 +1,8 @@
 import { ponder } from "ponder:registry";
-import { 
-  Land, 
-  PlantLifetimeAssignedEvent, 
-  PlantPointsAssignedEvent, 
+import {
+  Land,
+  PlantLifetimeAssignedEvent,
+  PlantPointsAssignedEvent,
   LandTransferEvent,
   VillageProductionClaimedEvent,
   VillageProductionXPClaimCooldownActiveEvent,
@@ -18,7 +18,9 @@ import {
   WareHouseLifetimeAssignedEvent,
   WareHousePlantPointsAssignedEvent,
   LandNameChangedEvent,
-  LandMintedEvent
+  LandMintedEvent,
+  CasinoBuiltEvent,
+  RouletteSpinResultEvent
 } from "ponder:schema";
 import type { IndexingFunctionArgs } from "ponder:env";
 
@@ -31,7 +33,7 @@ async function getOwnerOf(
 ) {
   const ownerOf = await client.readContract({
     abi: LandContract.abi,
-    address: LandContract.address, 
+    address: LandContract.address,
     functionName: "ownerOf",
     args: [tokenId],
     blockNumber,
@@ -91,7 +93,7 @@ ponder.on("LandContract:Transfer", async ({ event, context }: IndexingFunctionAr
 ponder.on("LandContract:LandNameChanged", async ({ event, context }: IndexingFunctionArgs<"LandContract:LandNameChanged">) => {
   const { client } = context;
   const { LandContract } = context.contracts;
-  
+
   // Fetch the owner for the token
   const owner = await getOwnerOf(client, LandContract, event.args.tokenId, event.block.number);
 
@@ -326,6 +328,36 @@ ponder.on("LandContract:WareHousePlantPointsAssigned", async ({ event, context }
       plantId: event.args.plantId,
       addedPoints: event.args.addedPoints,
       newPlantPoints: event.args.newPlantPoints,
+      blockHeight: event.block.number,
+      timestamp: event.block.timestamp,
+    });
+});
+
+// Casino/Roulette Event Handlers
+ponder.on("LandContract:CasinoBuilt", async ({ event, context }: IndexingFunctionArgs<"LandContract:CasinoBuilt">) => {
+  await context.db
+    .insert(CasinoBuiltEvent)
+    .values({
+      id: event.id,
+      landId: event.args.landId,
+      builder: event.args.builder,
+      token: event.args.token,
+      cost: event.args.cost,
+      blockHeight: event.block.number,
+      timestamp: event.block.timestamp,
+    });
+});
+
+ponder.on("LandContract:RouletteSpinResult", async ({ event, context }: IndexingFunctionArgs<"LandContract:RouletteSpinResult">) => {
+  await context.db
+    .insert(RouletteSpinResultEvent)
+    .values({
+      id: event.id,
+      landId: event.args.landId,
+      player: event.args.player,
+      winningNumber: Number(event.args.winningNumber),
+      won: event.args.won,
+      payout: event.args.payout,
       blockHeight: event.block.number,
       timestamp: event.block.timestamp,
     });

@@ -348,7 +348,45 @@ ponder.on("LandContract:CasinoBuilt", async ({ event, context }: IndexingFunctio
     });
 });
 
+// ABI for reading casino config at historical block
+const casinoConfigAbi = [
+  {
+    type: "function",
+    name: "casinoGetConfig",
+    inputs: [],
+    outputs: [
+      { name: "minBet", type: "uint256" },
+      { name: "maxBet", type: "uint256" },
+      { name: "bettingToken", type: "address" },
+      { name: "rewardPool", type: "address" },
+      { name: "enabled", type: "bool" },
+      { name: "maxBetsPerGame", type: "uint256" }
+    ],
+    stateMutability: "view"
+  }
+] as const;
+
+// Default SEED token address as fallback
+const DEFAULT_SEED_TOKEN = "0x546D239032b24eCEEE0cb05c92FC39090846adc7";
+
 ponder.on("LandContract:RouletteSpinResult", async ({ event, context }: IndexingFunctionArgs<"LandContract:RouletteSpinResult">) => {
+  const { client } = context;
+  const { LandContract } = context.contracts;
+
+  // Read betting token at the block height of this event for historical accuracy
+  let bettingToken = DEFAULT_SEED_TOKEN;
+  try {
+    const config = await client.readContract({
+      abi: casinoConfigAbi,
+      address: LandContract.address,
+      functionName: "casinoGetConfig",
+      blockNumber: event.block.number,
+    });
+    bettingToken = config[2] as string; // bettingToken is the 3rd output
+  } catch (err) {
+    console.warn("Failed to read casino config at block", event.block.number, err);
+  }
+
   await context.db
     .insert(RouletteSpinResultEvent)
     .values({
@@ -358,6 +396,7 @@ ponder.on("LandContract:RouletteSpinResult", async ({ event, context }: Indexing
       winningNumber: Number(event.args.winningNumber),
       won: event.args.won,
       payout: event.args.payout,
+      bettingToken,
       blockHeight: event.block.number,
       timestamp: event.block.timestamp,
     });

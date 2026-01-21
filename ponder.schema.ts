@@ -263,6 +263,7 @@ export const RouletteSpinResultEvent = onchainTable("roulette_spin_result_event"
   winningNumber: t.integer().notNull(),
   won: t.boolean().notNull(),
   payout: t.bigint().notNull(),
+  bettingToken: t.text().notNull(),
   blockHeight: t.bigint().notNull(),
   timestamp: t.bigint().notNull(),
 }));

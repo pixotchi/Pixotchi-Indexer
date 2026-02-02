@@ -655,4 +655,49 @@ export const LandAbi = [
     outputs: [],
     anonymous: false,
   },
+  // Blackjack Events
+  {
+    type: "event",
+    name: "BlackjackResult",
+    inputs: [
+      {
+        name: "landId",
+        type: "uint256",
+        indexed: true,
+        internalType: "uint256",
+      },
+      {
+        name: "player",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+      {
+        name: "result",
+        type: "uint8",
+        indexed: false,
+        internalType: "enum LibBlackjackStorage.GameResult",
+      },
+      {
+        name: "playerFinalValue",
+        type: "uint8",
+        indexed: false,
+        internalType: "uint8",
+      },
+      {
+        name: "dealerFinalValue",
+        type: "uint8",
+        indexed: false,
+        internalType: "uint8",
+      },
+      {
+        name: "payout",
+        type: "uint256",
+        indexed: false,
+        internalType: "uint256",
+      },
+    ],
+    outputs: [],
+    anonymous: false,
+  },
 ] as const; 

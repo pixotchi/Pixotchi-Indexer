@@ -268,4 +268,18 @@ export const RouletteSpinResultEvent = onchainTable("roulette_spin_result_event"
   timestamp: t.bigint().notNull(),
 }));
 
+// Blackjack Event Tables
+// GameResult enum: 0=NONE, 1=PLAYER_WIN, 2=DEALER_WIN, 3=PUSH, 4=PLAYER_BUST, 5=DEALER_BUST, 6=PLAYER_BLACKJACK, 7=DEALER_BLACKJACK, 8=SURRENDERED
+export const BlackjackResultEvent = onchainTable("blackjack_result_event", (t) => ({
+  id: t.text().primaryKey(),
+  landId: t.bigint().notNull(),
+  player: t.text().notNull(),
+  result: t.integer().notNull(), // GameResult enum value
+  playerFinalValue: t.integer().notNull(),
+  dealerFinalValue: t.integer().notNull(),
+  payout: t.bigint().notNull(),
+  bettingToken: t.text().notNull(),
+  blockHeight: t.bigint().notNull(),
+  timestamp: t.bigint().notNull(),
+}));
 

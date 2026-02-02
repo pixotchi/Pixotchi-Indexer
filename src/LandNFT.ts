@@ -20,7 +20,8 @@ import {
   LandNameChangedEvent,
   LandMintedEvent,
   CasinoBuiltEvent,
-  RouletteSpinResultEvent
+  RouletteSpinResultEvent,
+  BlackjackResultEvent
 } from "ponder:schema";
 import type { IndexingFunctionArgs } from "ponder:env";
 
@@ -400,4 +401,56 @@ ponder.on("LandContract:RouletteSpinResult", async ({ event, context }: Indexing
       blockHeight: event.block.number,
       timestamp: event.block.timestamp,
     });
-}); 
+});
+
+// ABI for reading blackjack config at historical block
+const blackjackConfigAbi = [
+  {
+    type: "function",
+    name: "blackjackGetConfig",
+    inputs: [],
+    outputs: [
+      { name: "minBet", type: "uint256" },
+      { name: "maxBet", type: "uint256" },
+      { name: "bettingToken", type: "address" },
+      { name: "rewardPool", type: "address" },
+      { name: "enabled", type: "bool" },
+      { name: "requiredLevel", type: "uint8" }
+    ],
+    stateMutability: "view"
+  }
+] as const;
+
+ponder.on("LandContract:BlackjackResult", async ({ event, context }: IndexingFunctionArgs<"LandContract:BlackjackResult">) => {
+  const { client } = context;
+  const { LandContract } = context.contracts;
+
+  // Read betting token at the block height of this event for historical accuracy
+  let bettingToken = DEFAULT_SEED_TOKEN;
+  try {
+    const config = await client.readContract({
+      abi: blackjackConfigAbi,
+      address: LandContract.address,
+      functionName: "blackjackGetConfig",
+      blockNumber: event.block.number,
+    });
+    bettingToken = config[2] as string; // bettingToken is the 3rd output
+  } catch (err) {
+    console.warn("Failed to read blackjack config at block", event.block.number, err);
+  }
+
+  await context.db
+    .insert(BlackjackResultEvent)
+    .values({
+      id: event.id,
+      landId: event.args.landId,
+      player: event.args.player,
+      result: Number(event.args.result),
+      playerFinalValue: Number(event.args.playerFinalValue),
+      dealerFinalValue: Number(event.args.dealerFinalValue),
+      payout: event.args.payout,
+      bettingToken,
+      blockHeight: event.block.number,
+      timestamp: event.block.timestamp,
+    });
+});  

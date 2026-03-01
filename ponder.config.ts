@@ -2,6 +2,9 @@ import { createConfig } from "ponder";
 
 import { PixotchiRouterAbi } from "./abis/PixotchiRouterAbi";
 import { LandAbi } from "./abis/LandAbi";
+import { LandCasinoV2Abi } from "./abis/LandCasinoV2Abi";
+
+const landCasinoV2StartBlock = 42807354;
 
 export default createConfig({
   chains: {
@@ -32,6 +35,14 @@ export default createConfig({
       abi: LandAbi,
       address: "0x3f1F8F0C4BE4bCeB45E6597AFe0dE861B8c3278c",
       startBlock: 33179676,
+      maxBlockRange: 1000,
+    },
+    // Post-upgrade multi-token casino/blackjack events.
+    LandCasinoV2: {
+      chain: "base",
+      abi: LandCasinoV2Abi,
+      address: "0x3f1F8F0C4BE4bCeB45E6597AFe0dE861B8c3278c",
+      startBlock: landCasinoV2StartBlock,
       maxBlockRange: 1000,
     },
   },

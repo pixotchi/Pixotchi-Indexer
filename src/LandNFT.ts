@@ -42,6 +42,47 @@ async function getOwnerOf(
   return ownerOf;
 }
 
+async function insertRouletteSpinResultEvent(
+  context: any,
+  event: any,
+  bettingToken: string
+) {
+  await context.db
+    .insert(RouletteSpinResultEvent)
+    .values({
+      id: event.id,
+      landId: event.args.landId,
+      player: event.args.player,
+      winningNumber: Number(event.args.winningNumber),
+      won: event.args.won,
+      payout: event.args.payout,
+      bettingToken,
+      blockHeight: event.block.number,
+      timestamp: event.block.timestamp,
+    });
+}
+
+async function insertBlackjackResultEvent(
+  context: any,
+  event: any,
+  bettingToken: string
+) {
+  await context.db
+    .insert(BlackjackResultEvent)
+    .values({
+      id: event.id,
+      landId: event.args.landId,
+      player: event.args.player,
+      result: Number(event.args.result),
+      playerFinalValue: Number(event.args.playerFinalValue),
+      dealerFinalValue: Number(event.args.dealerFinalValue),
+      payout: event.args.payout,
+      bettingToken,
+      blockHeight: event.block.number,
+      timestamp: event.block.timestamp,
+    });
+}
+
 ponder.on("LandContract:LandMinted", async ({ event, context }: IndexingFunctionArgs<"LandContract:LandMinted">) => {
   await context.db
     .insert(Land)
@@ -388,19 +429,7 @@ ponder.on("LandContract:RouletteSpinResult", async ({ event, context }: Indexing
     console.warn("Failed to read casino config at block", event.block.number, err);
   }
 
-  await context.db
-    .insert(RouletteSpinResultEvent)
-    .values({
-      id: event.id,
-      landId: event.args.landId,
-      player: event.args.player,
-      winningNumber: Number(event.args.winningNumber),
-      won: event.args.won,
-      payout: event.args.payout,
-      bettingToken,
-      blockHeight: event.block.number,
-      timestamp: event.block.timestamp,
-    });
+  await insertRouletteSpinResultEvent(context, event, bettingToken);
 });
 
 // ABI for reading blackjack config at historical block
@@ -439,18 +468,13 @@ ponder.on("LandContract:BlackjackResult", async ({ event, context }: IndexingFun
     console.warn("Failed to read blackjack config at block", event.block.number, err);
   }
 
-  await context.db
-    .insert(BlackjackResultEvent)
-    .values({
-      id: event.id,
-      landId: event.args.landId,
-      player: event.args.player,
-      result: Number(event.args.result),
-      playerFinalValue: Number(event.args.playerFinalValue),
-      dealerFinalValue: Number(event.args.dealerFinalValue),
-      payout: event.args.payout,
-      bettingToken,
-      blockHeight: event.block.number,
-      timestamp: event.block.timestamp,
-    });
-});  
+  await insertBlackjackResultEvent(context, event, bettingToken);
+});
+
+ponder.on("LandCasinoV2:RouletteSpinResult", async ({ event, context }: IndexingFunctionArgs<"LandCasinoV2:RouletteSpinResult">) => {
+  await insertRouletteSpinResultEvent(context, event, event.args.bettingToken);
+});
+
+ponder.on("LandCasinoV2:BlackjackResult", async ({ event, context }: IndexingFunctionArgs<"LandCasinoV2:BlackjackResult">) => {
+  await insertBlackjackResultEvent(context, event, event.args.bettingToken);
+});

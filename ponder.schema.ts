@@ -283,3 +283,22 @@ export const BlackjackResultEvent = onchainTable("blackjack_result_event", (t) =
   timestamp: t.bigint().notNull(),
 }));
 
+export const BarracksBuiltEvent = onchainTable("barracks_built_event", (t) => ({
+  id: t.text().primaryKey(),
+  landId: t.bigint().notNull(),
+  builder: t.text().notNull(),
+  token: t.text().notNull(),
+  cost: t.bigint().notNull(),
+  blockHeight: t.bigint().notNull(),
+  timestamp: t.bigint().notNull(),
+}));
+
+export const BarracksRaidEvent = onchainTable("barracks_raid_event", (t) => ({
+  id: t.text().primaryKey(),
+  raidId: t.bigint().notNull(),
+  attackerLandId: t.bigint().notNull(),
+  defenderLandId: t.bigint().notNull(),
+  attackerWon: t.boolean().notNull(),
+  blockHeight: t.bigint().notNull(),
+  timestamp: t.bigint().notNull(),
+}));

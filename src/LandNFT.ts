@@ -21,7 +21,9 @@ import {
   LandMintedEvent,
   CasinoBuiltEvent,
   RouletteSpinResultEvent,
-  BlackjackResultEvent
+  BlackjackResultEvent,
+  BarracksBuiltEvent,
+  BarracksRaidEvent
 } from "ponder:schema";
 import type { IndexingFunctionArgs } from "ponder:env";
 
@@ -477,4 +479,32 @@ ponder.on("LandCasinoV2:RouletteSpinResult", async ({ event, context }: Indexing
 
 ponder.on("LandCasinoV2:BlackjackResult", async ({ event, context }: IndexingFunctionArgs<"LandCasinoV2:BlackjackResult">) => {
   await insertBlackjackResultEvent(context, event, event.args.bettingToken);
+});
+
+ponder.on("LandBarracksV1:BarracksBuilt", async ({ event, context }: IndexingFunctionArgs<"LandBarracksV1:BarracksBuilt">) => {
+  await context.db
+    .insert(BarracksBuiltEvent)
+    .values({
+      id: event.id,
+      landId: event.args.landId,
+      builder: event.args.builder,
+      token: event.args.token,
+      cost: event.args.cost,
+      blockHeight: event.block.number,
+      timestamp: event.block.timestamp,
+    });
+});
+
+ponder.on("LandBarracksV1:BarracksRaidResolved", async ({ event, context }: IndexingFunctionArgs<"LandBarracksV1:BarracksRaidResolved">) => {
+  await context.db
+    .insert(BarracksRaidEvent)
+    .values({
+      id: event.id,
+      raidId: event.args.raidId,
+      attackerLandId: event.args.attackerLandId,
+      defenderLandId: event.args.defenderLandId,
+      attackerWon: event.args.attackerWon,
+      blockHeight: event.block.number,
+      timestamp: event.block.timestamp,
+    });
 });

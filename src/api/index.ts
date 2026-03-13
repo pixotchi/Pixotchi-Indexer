@@ -1,16 +1,96 @@
 import { db } from "ponder:api";
 import schema from "ponder:schema";
-import { Hono } from "hono";
+import { Hono, type Context, type Next } from "hono";
 import { graphql } from "ponder";
 
 const app = new Hono();
+const graphqlHandler = graphql({ db, schema });
+const isProduction = process.env.NODE_ENV === "production";
+const sharedSecret = process.env.INDEXER_SHARED_SECRET?.trim() || "";
+const maxRequestBytes = Number(process.env.INDEXER_MAX_REQUEST_BYTES || 32 * 1024);
+const maxAliasCount = Number(process.env.INDEXER_MAX_ALIAS_COUNT || 10);
+const maxOperationCount = Number(process.env.INDEXER_MAX_OPERATION_COUNT || 1);
 
-// GraphQL endpoint
-app.use("/", graphql({ db, schema }));
-app.use("/graphql", graphql({ db, schema }));
+function countGraphqlAliases(query: string): number {
+  const matches = query.match(/(?:^|[\s{,])([A-Za-z_][\w]*)\s*:\s*[A-Za-z_][\w]*\s*(?=\()/g);
+  return matches?.length ?? 0;
+}
+
+function countOperations(query: string): number {
+  const matches = query.match(/\b(query|mutation|subscription)\b/g);
+  return matches?.length || 1;
+}
+
+async function requireIndexerAccess(c: Context, next: Next) {
+  if (!isProduction) {
+    await next();
+    return;
+  }
+
+  if (!sharedSecret) {
+    return c.text("Indexer secret is not configured", 503);
+  }
+
+  if (c.req.header("x-indexer-secret") !== sharedSecret) {
+    return c.notFound();
+  }
+
+  await next();
+}
+
+async function validateGraphqlRequest(c: Context, next: Next) {
+  if (c.req.method !== "POST") {
+    return c.notFound();
+  }
+
+  const contentLength = Number(c.req.header("content-length") || "0");
+  if (contentLength > maxRequestBytes) {
+    return c.text("Payload too large", 413);
+  }
+
+  const rawBody = await c.req.raw.clone().text();
+  if (Buffer.byteLength(rawBody, "utf8") > maxRequestBytes) {
+    return c.text("Payload too large", 413);
+  }
+
+  let payload: { query?: string } | null = null;
+  try {
+    payload = JSON.parse(rawBody);
+  } catch {
+    return c.text("Invalid JSON body", 400);
+  }
+
+  const query = typeof payload?.query === "string" ? payload.query : "";
+  if (!query.trim()) {
+    return c.text("Missing GraphQL query", 400);
+  }
+
+  if (isProduction && /__schema|__type/.test(query)) {
+    return c.notFound();
+  }
+
+  if (countGraphqlAliases(query) > maxAliasCount) {
+    return c.text("Too many GraphQL aliases", 400);
+  }
+
+  if (countOperations(query) > maxOperationCount) {
+    return c.text("Too many GraphQL operations", 400);
+  }
+
+  await next();
+}
+
+if (!isProduction) {
+  app.use("/", graphqlHandler);
+}
+
+app.use("/graphql", requireIndexerAccess, validateGraphqlRequest, graphqlHandler);
 
 // Custom info endpoint (avoiding reserved routes)
-app.get("/info", (c) => {
+app.get("/info", (c: Context) => {
+  if (isProduction) {
+    return c.notFound();
+  }
   return c.json({ 
     name: "Unified Game Indexer",
     version: "2.0.0",
@@ -25,7 +105,10 @@ app.get("/info", (c) => {
 });
 
 // Basic API documentation
-app.get("/api", (c) => {
+app.get("/api", (c: Context) => {
+  if (isProduction) {
+    return c.notFound();
+  }
   return c.json({
     name: "Unified Game Indexer API",
     version: "2.0.0",
@@ -62,5 +145,10 @@ app.get("/api", (c) => {
     }
   });
 });
+
+if (isProduction) {
+  app.all("/", (c: Context) => c.notFound());
+  app.all("/metrics", (c: Context) => c.notFound());
+}
 
 export default app; 

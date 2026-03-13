@@ -148,7 +148,6 @@ app.get("/api", (c: Context) => {
 
 if (isProduction) {
   app.all("/", (c: Context) => c.notFound());
-  app.all("/metrics", (c: Context) => c.notFound());
 }
 
 export default app; 

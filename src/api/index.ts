@@ -65,7 +65,7 @@ async function validateGraphqlRequest(c: Context, next: Next) {
     return c.text("Missing GraphQL query", 400);
   }
 
-  if (isProduction && /__schema|__type/.test(query)) {
+  if (isProduction && /\b__schema\b|\b__type\b/.test(query)) {
     return c.notFound();
   }
 
